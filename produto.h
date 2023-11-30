@@ -9,13 +9,36 @@ short menuProduto(){
     puts("1 - Incluir Produto");
     puts("2 - Excluir Produto");
     puts("3 - Consultar Produto");
+    puts("4 - Listar Produtos");
     puts("0 - Voltar ao Menu Princpal");
     scanf("%hd", &op);
     return op;
 }
 
 Produto* buscarProduto(int* codigo){
-
+    FILE *arq;
+    long int n;
+    int i;
+    Produto *produto=NULL;
+    arq = fopen("./produtos.bin", "rb");
+    if(arq == NULL){
+        puts("Erro ao abrir o arquivo.");
+        exit(1);
+    }
+    fseek(arq, 0, SEEK_END);
+    n = ftell(arq);
+    n = n/sizeof(Produto);
+    Produto *V;
+    V = malloc(n*sizeof(Produto));
+    fread(V, sizeof(Produto), n, arq);
+    fclose(arq);
+    for(i=0; i<n; i++){
+        if(V[i].codigo == *codigo){
+            *produto = V[i];
+        }
+    }
+    free(V);
+    return produto;
 }
 
 short gravarProduto(Produto *novo){
@@ -37,7 +60,12 @@ void imprimirProduto(Produto *produto){
 void listarProdutos(){
     FILE *arq;
     long int n;
+    int i;
     arq = fopen("./produtos.bin", "rb");
+    if(arq == NULL){
+        puts("Erro ao abrir o arquivo.");
+        exit(1);
+    }
     fseek(arq, 0, SEEK_END);
     n = ftell(arq);
     fclose(arq);
@@ -46,7 +74,7 @@ void listarProdutos(){
     V = malloc(n*sizeof(Produto));
     arq = fopen("./produtos.bin","rb");
     fread(V, sizeof(Produto), n, arq);
-    for(int i=0; i<n; i++){
+    for(i=0; i<n; i++){
         printf("%d\n", V[i].codigo);
         printf("%s", V[i].descricao);
         printf("%f\n", V[i].preco);
