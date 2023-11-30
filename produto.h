@@ -14,6 +14,10 @@ short menuProduto(){
     return op;
 }
 
+Produto* buscarProduto(int* codigo){
+
+}
+
 short gravarProduto(Produto *novo){
     printf("Digite o código do produto: ");
     scanf("%d", &novo->codigo);
@@ -24,4 +28,30 @@ short gravarProduto(Produto *novo){
     scanf("%f", &novo->preco);
 }
 
-//Consultar Produto
+void imprimirProduto(Produto *produto){
+    printf("%d\n", produto->codigo);
+    printf("%s", produto->descricao);
+    printf("%f\n", produto->preco);
+}
+
+void listarProdutos(){
+    FILE *arq;
+    long int n;
+    arq = fopen("./produtos.bin", "rb");
+    fseek(arq, 0, SEEK_END);
+    n = ftell(arq);
+    fclose(arq);
+    n = n/sizeof(Produto);
+    Produto *V;
+    V = malloc(n*sizeof(Produto));
+    arq = fopen("./produtos.bin","rb");
+    fread(V, sizeof(Produto), n, arq);
+    for(int i=0; i<n; i++){
+        printf("%d\n", V[i].codigo);
+        printf("%s", V[i].descricao);
+        printf("%f\n", V[i].preco);
+        puts("");
+    }
+    fclose(arq);
+    free(V);
+}
