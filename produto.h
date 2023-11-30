@@ -19,7 +19,7 @@ Produto* buscarProduto(int* codigo){
     FILE *arq;
     long int n;
     int i;
-    Produto *produto=NULL;
+    Produto *aux=NULL;
     arq = fopen("./produtos.bin", "rb");
     if(arq == NULL){
         puts("Erro ao abrir o arquivo.");
@@ -30,15 +30,17 @@ Produto* buscarProduto(int* codigo){
     n = n/sizeof(Produto);
     Produto *V;
     V = malloc(n*sizeof(Produto));
+    rewind(arq);
     fread(V, sizeof(Produto), n, arq);
     fclose(arq);
     for(i=0; i<n; i++){
         if(V[i].codigo == *codigo){
-            *produto = V[i];
+            aux = malloc(sizeof(Produto));
+            *aux = V[i];
         }
     }
     free(V);
-    return produto;
+    return aux;
 }
 
 short gravarProduto(Produto *novo){
@@ -52,6 +54,10 @@ short gravarProduto(Produto *novo){
 }
 
 void imprimirProduto(Produto *produto){
+    if(produto == NULL){
+        puts("Error");
+        exit(1);
+    }
     printf("%d\n", produto->codigo);
     printf("%s", produto->descricao);
     printf("%f\n", produto->preco);
