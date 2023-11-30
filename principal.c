@@ -15,24 +15,49 @@ short menuPrincipal(){
 }
 
 int main(){
-    short op=1;
+    short op=1, op_produto;
+    //variáveis Cliente
+    //variáveis Produto
+    Produto *novo, *produto_buscado;
+    char aux_codigo[30];
+    //Variáveis Pedido
+    FILE *arq;
     while(op!=0){
         op = menuPrincipal();
         switch(op){
         case 1://Cliente
             break;
         case 2://Produto
-            short op2=1;
-            while(op2 != 0){
-                op2 = menuProduto();
-                switch(op2){
+            op_produto=1;
+            while(op_produto != 0){
+                op_produto = menuProduto();
+                switch(op_produto){
                 case 1://Incluir Produto
+                    novo = malloc(sizeof(Produto));
+                    gravarProduto(novo);
+                    arq = fopen("./produtos.bin", "ab");
+                    fwrite(novo, sizeof(Produto), 1, arq);
+                    fflush(arq);
+                    fclose(arq);
                     break;
                 case 2://Excluir Produto
                     break;
                 case 3://Consultar Produto
+                    produto_buscado = malloc(sizeof(Produto));
+                    printf("Digite o código do produto: ");
+                    setbuf(stdin, NULL);
+                    fgets(aux_codigo, 30, stdin);
+                    Replace(aux_codigo, '\n', '\0');
+                    produto_buscado = buscarProduto(aux_codigo);
+                    if(produto_buscado != NULL){
+                        puts("Produto Encontrado.");
+                    }
+                    else{
+                        puts("produto não encontrado.");
+                    }
                     break;
                 case 4://Listar Produtos
+                    listarProdutos();
                     break;
                 case 0://Voltar ao Menu Principal
                     puts("Voltando ao Menu Principal...");

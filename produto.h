@@ -1,8 +1,19 @@
+#include <string.h>
+
 typedef struct {
-    int codigo;
+    char codigo[30];
     char descricao[301];
     float preco;
 } Produto;
+
+void Replace(char* String, char antigo, char novo){
+    int i;
+    for(i=0; String[i]!='\0'; i++){
+        if(String[i] == antigo){
+            String[i] = novo;
+        }
+    }
+}
 
 short menuProduto(){
     short op;
@@ -15,7 +26,7 @@ short menuProduto(){
     return op;
 }
 
-Produto* buscarProduto(int* codigo){
+Produto* buscarProduto(char* codigo){
     FILE *arq;
     long int n;
     int i;
@@ -34,7 +45,7 @@ Produto* buscarProduto(int* codigo){
     fread(V, sizeof(Produto), n, arq);
     fclose(arq);
     for(i=0; i<n; i++){
-        if(V[i].codigo == *codigo){
+        if(strcmp(V[i].codigo, codigo) == 0){
             aux = malloc(sizeof(Produto));
             *aux = V[i];
         }
@@ -44,8 +55,12 @@ Produto* buscarProduto(int* codigo){
 }
 
 short gravarProduto(Produto *novo){
+    //char aux[30];
     printf("Digite o código do produto: ");
-    scanf("%d", &novo->codigo);
+    setbuf(stdin, NULL);
+    fgets(novo->codigo, 30, stdin);
+    Replace(novo->codigo, '\n', '\0');
+    //novo->codigo = aux;
     printf("Escreva a descrição do produto [Máximo de 300 caracteres]\n");
     setbuf(stdin, NULL);
     fgets(novo->descricao, 301, stdin);
@@ -58,7 +73,7 @@ void imprimirProduto(Produto *produto){
         puts("Error");
         exit(1);
     }
-    printf("%d\n", produto->codigo);
+    printf("%s\n", produto->codigo);
     printf("%s", produto->descricao);
     printf("%f\n", produto->preco);
 }
@@ -81,11 +96,15 @@ void listarProdutos(){
     arq = fopen("./produtos.bin","rb");
     fread(V, sizeof(Produto), n, arq);
     for(i=0; i<n; i++){
-        printf("%d\n", V[i].codigo);
+        printf("%s\n", V[i].codigo);
         printf("%s", V[i].descricao);
         printf("%f\n", V[i].preco);
         puts("");
     }
     fclose(arq);
     free(V);
+}
+
+void removerProduto(char* codigo){
+
 }
