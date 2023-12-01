@@ -36,11 +36,12 @@ Produto* buscarProduto(char* codigo){
         puts("Erro ao abrir o arquivo.");
         exit(1);
     }
+    //Calcula a quantidade de elementos do arquivo
     fseek(arq, 0, SEEK_END);
     n = ftell(arq);
     n = n/sizeof(Produto);
     Produto *V;
-    V = malloc(n*sizeof(Produto));
+    V = malloc(n*sizeof(Produto)); //Aloca dinamicamente um vetor V com n elementos
     rewind(arq);
     fread(V, sizeof(Produto), n, arq);
     fclose(arq);
@@ -97,12 +98,13 @@ void listarProdutos(){
         puts("Erro ao abrir o arquivo.");
         exit(1);
     }
+    //Calcula a quantidade de elementos do arquivo
     fseek(arq, 0, SEEK_END);
     n = ftell(arq);
     fclose(arq);
     n = n/sizeof(Produto);
     Produto *V;
-    V = malloc(n*sizeof(Produto));
+    V = malloc(n*sizeof(Produto)); //Aloca dinamicamente um vetor V com n elementos
     arq = fopen("./produtos.bin","rb");
     fread(V, sizeof(Produto), n, arq);
     for(i=0; i<n; i++){
@@ -125,14 +127,16 @@ void removerProduto(char* codigo){
         puts("Erro ao abrir o arquivo.");
         exit(1);
     }
+    //Calcula a quantidade de elementos do arquivo
     fseek(arq, 0, SEEK_END);
     n = ftell(arq);
     n = n/sizeof(Produto);
-    V_Antigo = malloc(n*sizeof(Produto));
-    V_Novo = malloc((n-1)*sizeof(Produto));
+    V_Antigo = malloc(n*sizeof(Produto)); //Aloca dinamicamente um vetor V_Antigo com n elementos, o qual é responsável por armazenar os dados antigos do vetor
+    V_Novo = malloc((n-1)*sizeof(Produto));//Aloca dinamicamente um vetor V_Novo com n-1 elementos, o qual ficará responsável por armazenar os novos dados que serão gravados no arquivo
     rewind(arq);
     fread(V_Antigo, sizeof(Produto), n, arq);
     fclose(arq);
+    //Código que identifica qual item de V_Antigo deve ser removido e apaga os dados desse item
     for(i=0; i<n; i++){
         if(strcmp(V_Antigo[i].codigo, codigo)==0){
             strcpy(V_Antigo[i].codigo, "");
@@ -140,6 +144,7 @@ void removerProduto(char* codigo){
             V_Antigo[i].preco  = 0.0;
         }
     }
+    //Coloca dos dados de V_Antigo que não foram apagados em V_Novo
     j = 0;
     for(i=0; strcmp(V_Antigo[i].codigo, "")!=0; i++){
         V_Novo[j] = V_Antigo[i];
@@ -151,6 +156,7 @@ void removerProduto(char* codigo){
     }
     arq = fopen("./produtos.bin", "wb");
     rewind(arq);
+    //Sobreescreve o Arquivo com os dados de V_Novo
     fwrite(V_Novo, sizeof(Produto), (n-1), arq);
     fflush(arq);
     fclose(arq);
