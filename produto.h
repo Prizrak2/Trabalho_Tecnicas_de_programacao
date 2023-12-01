@@ -55,12 +55,22 @@ Produto* buscarProduto(char* codigo){
 }
 
 short gravarProduto(Produto *novo){
-    //char aux[30];
+    Produto *aux = malloc(sizeof(Produto));
     printf("Digite o código do produto: ");
     setbuf(stdin, NULL);
     fgets(novo->codigo, 30, stdin);
     Replace(novo->codigo, '\n', '\0');
-    //novo->codigo = aux;
+    aux = buscarProduto(novo->codigo);
+    if(aux != NULL){
+        puts("O Produto já existe.");
+        while(aux != NULL){
+            printf("Digite o código do produto novamente: ");
+            setbuf(stdin, NULL);
+            fgets(novo->codigo, 30, stdin);
+            Replace(novo->codigo, '\n', '\0');
+            aux = buscarProduto(novo->codigo);
+        }
+    }
     printf("Escreva a descrição do produto [Máximo de 300 caracteres]\n");
     setbuf(stdin, NULL);
     fgets(novo->descricao, 301, stdin);
@@ -106,5 +116,45 @@ void listarProdutos(){
 }
 
 void removerProduto(char* codigo){
-
+    FILE *arq;
+    long int n;
+    int i, j;
+    Produto *V_Antigo, *V_Novo;
+    arq = fopen("./produtos.bin", "rb");
+    if(arq == NULL){
+        puts("Erro ao abrir o arquivo.");
+        exit(1);
+    }
+    fseek(arq, 0, SEEK_END);
+    n = ftell(arq);
+    n = n/sizeof(Produto);
+    V_Antigo = malloc(n*sizeof(Produto));
+    V_Novo = malloc((n-1)*sizeof(Produto));
+    rewind(arq);
+    fread(V_Antigo, sizeof(Produto), n, arq);
+    fclose(arq);
+    for(i=0; i<n; i++){
+        if(strcmp(V_Antigo[i].codigo, codigo)==0){
+            strcpy(V_Antigo[i].codigo, "");
+            strcpy(V_Antigo[i].descricao, "");
+            V_Antigo[i].preco  = 0.0;
+        }
+    }
+    j = 0;
+    for(i=0; strcmp(V_Antigo[i].codigo, "")!=0; i++){
+        V_Novo[j] = V_Antigo[i];
+        j++;
+    }
+    for(i=i+1; i<n; i++){
+        V_Novo[j] = V_Antigo[i];
+        j++;
+    }
+    arq = fopen("./produtos.bin", "wb");
+    rewind(arq);
+    fwrite(V_Novo, sizeof(Produto), (n-1), arq);
+    fflush(arq);
+    fclose(arq);
+    free(V_Antigo);
+    free(V_Novo);
 }
+

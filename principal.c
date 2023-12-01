@@ -41,6 +41,11 @@ int main(){
                     fclose(arq);
                     break;
                 case 2://Excluir Produto
+                    printf("Digite o código do produto: ");
+                    setbuf(stdin, NULL);
+                    fgets(aux_codigo, 30, stdin);
+                    Replace(aux_codigo, '\n', '\0');
+                    removerProduto(aux_codigo);
                     break;
                 case 3://Consultar Produto
                     produto_buscado = malloc(sizeof(Produto));
@@ -49,11 +54,11 @@ int main(){
                     fgets(aux_codigo, 30, stdin);
                     Replace(aux_codigo, '\n', '\0');
                     produto_buscado = buscarProduto(aux_codigo);
-                    if(produto_buscado != NULL){
-                        puts("Produto Encontrado.");
+                    if(produto_buscado == NULL){
+                        puts("O Produto não existe.");
                     }
                     else{
-                        puts("produto não encontrado.");
+                        imprimirProduto(produto_buscado);
                     }
                     break;
                 case 4://Listar Produtos
