@@ -15,12 +15,14 @@ short menuPrincipal(){
 }
 
 int main(){
-    short op=1, op_produto;
+    short op=1, op_cliente, op_produto, op_pedido;
     //variáveis Cliente
+
     //variáveis Produto
     Produto *novo, *produto_buscado;
-    char aux_codigo[30];
+    char aux_codigo[CODIGO_TAM];
     //Variáveis Pedido
+
     FILE *arq;
     while(op!=0){
         op = menuPrincipal();
@@ -43,7 +45,7 @@ int main(){
                 case 2://Excluir Produto
                     printf("Digite o código do produto: ");
                     setbuf(stdin, NULL);
-                    fgets(aux_codigo, 30, stdin);
+                    fgets(aux_codigo, CODIGO_TAM, stdin);
                     Replace(aux_codigo, '\n', '\0');
                     removerProduto(aux_codigo);
                     break;
@@ -51,7 +53,7 @@ int main(){
                     produto_buscado = malloc(sizeof(Produto));
                     printf("Digite o código do produto: ");
                     setbuf(stdin, NULL);
-                    fgets(aux_codigo, 30, stdin);
+                    fgets(aux_codigo, CODIGO_TAM, stdin);
                     Replace(aux_codigo, '\n', '\0');
                     produto_buscado = buscarProduto(aux_codigo);
                     if(produto_buscado == NULL){

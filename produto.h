@@ -1,7 +1,8 @@
 #include <string.h>
+#define CODIGO_TAM 30
 
 typedef struct {
-    char codigo[30];
+    char codigo[CODIGO_TAM];
     char descricao[301];
     float preco;
 } Produto;
@@ -59,7 +60,7 @@ short gravarProduto(Produto *novo){
     Produto *aux = malloc(sizeof(Produto));
     printf("Digite o código do produto: ");
     setbuf(stdin, NULL);
-    fgets(novo->codigo, 30, stdin);
+    fgets(novo->codigo, CODIGO_TAM, stdin);
     Replace(novo->codigo, '\n', '\0');
     aux = buscarProduto(novo->codigo);
     if(aux != NULL){
@@ -67,7 +68,7 @@ short gravarProduto(Produto *novo){
         while(aux != NULL){
             printf("Digite o código do produto novamente: ");
             setbuf(stdin, NULL);
-            fgets(novo->codigo, 30, stdin);
+            fgets(novo->codigo, CODIGO_TAM, stdin);
             Replace(novo->codigo, '\n', '\0');
             aux = buscarProduto(novo->codigo);
         }
