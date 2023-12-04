@@ -60,9 +60,9 @@ Produto* buscarProduto(char* codigo){
 
 short analisarProduto(char* codigo){
     if(buscarProduto(codigo) != NULL){
-        return 1;
+        return 1;//Produto Existe
     }
-    return 0;
+    return 0;//Produto não Existe
 }
 
 short gravarProduto(Produto *novo){
