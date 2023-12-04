@@ -1,4 +1,5 @@
 #include <string.h>
+#include "pedido.h"
 #define CODIGO_TAM 30
 
 typedef struct {
@@ -24,6 +25,7 @@ short menuProduto(){
     puts("4 - Listar Produtos");
     puts("0 - Voltar ao Menu Princpal");
     scanf("%hd", &op);
+    puts("");
     return op;
 }
 
@@ -56,21 +58,25 @@ Produto* buscarProduto(char* codigo){
     return aux;
 }
 
+short analisarProduto(char* codigo){
+    if(buscarProduto(codigo) != NULL){
+        return 1;
+    }
+    return 0;
+}
+
 short gravarProduto(Produto *novo){
-    Produto *aux = malloc(sizeof(Produto));
     printf("Digite o código do produto: ");
     setbuf(stdin, NULL);
     fgets(novo->codigo, CODIGO_TAM, stdin);
     Replace(novo->codigo, '\n', '\0');
-    aux = buscarProduto(novo->codigo);
-    if(aux != NULL){
+    if(analisarProduto(novo->codigo) == 1){//Analisa Produto
         puts("O Produto já existe.");
-        while(aux != NULL){
+        while(analisarProduto(novo->codigo) == 1){//Analisa Produto Novamente
             printf("Digite o código do produto novamente: ");
             setbuf(stdin, NULL);
             fgets(novo->codigo, CODIGO_TAM, stdin);
             Replace(novo->codigo, '\n', '\0');
-            aux = buscarProduto(novo->codigo);
         }
     }
     printf("Escreva a descrição do produto [Máximo de 300 caracteres]\n");
@@ -81,13 +87,9 @@ short gravarProduto(Produto *novo){
 }
 
 void imprimirProduto(Produto *produto){
-    if(produto == NULL){
-        puts("Error");
-        exit(1);
-    }
     printf("%s\n", produto->codigo);
     printf("%s", produto->descricao);
-    printf("%f\n", produto->preco);
+    printf("%.2f\n", produto->preco);
 }
 
 void listarProdutos(){
@@ -111,7 +113,7 @@ void listarProdutos(){
     for(i=0; i<n; i++){
         printf("%s\n", V[i].codigo);
         printf("%s", V[i].descricao);
-        printf("%f\n", V[i].preco);
+        printf("%.2f\n", V[i].preco);
         puts("");
     }
     fclose(arq);
@@ -164,4 +166,32 @@ void removerProduto(char* codigo){
     free(V_Antigo);
     free(V_Novo);
 }
+
+short consultarCodigoPedido(char *codigo){
+    FILE *aux;
+    Pedido *V;
+    int n, i;
+    aux = fopen("./pedidos.bin", "rb");
+    if(aux == NULL){
+        puts("Erro ao abrir o arquivo.");
+        exit(1);
+    }
+    //Calcula a quantidade de elementos do arquivo
+    fseek(aux, 0, SEEK_END);
+    n = ftell(aux);
+    n = n/sizeof(Pedido);
+    V = malloc(n*sizeof(Pedido));
+    rewind(aux);
+    fread(V, sizeof(Pedido), n, aux);
+    fclose(aux);
+    for(i=0; i<n; i++){
+        Replace(V[i].codigoProduto, '\n', '\0');
+        if(strcmp(V[i].codigoProduto, codigo) == 0){
+            return 1;
+        }
+    }
+    free(V);
+    return 0;
+}
+
 
