@@ -6,10 +6,10 @@
 
 typedef struct{
     char cpf[12];
-    char nome[30];
-    char celular[15];
-    char telefone[15];
-    char email[100];
+    char nome[50];
+    char celular[20];
+    char telefone[20];
+    char email[120];
 } Cliente;
 
 short menuCliente(){
@@ -131,6 +131,51 @@ Cliente* buscarCliente(char*cpf){
     return aux;
 }
 
+void removerCliente(char*cpf){
+    FILE *arq;
+    char linha[256];
+    bool achou = false;
+    int i = 0, linhaContador = 0, k = 0;
+
+    arq = fopen("cliente.csv", "r");
+    if(arq == NULL){
+        puts("Erro ao abrir o arquivo.");
+        exit(1);
+    }
+
+    char **vetor = (char **)calloc(500, sizeof(char *));
+
+    while (fgets(linha, sizeof(linha), arq) != NULL) {
+        linhaContador++;
+        vetor[linhaContador - 1] = (char *)calloc(strlen(linha) + 1, sizeof(char));
+        strcpy(vetor[linhaContador - 1], linha);
+    }
+
+    fclose(arq);
+
+    arq = fopen("cliente.csv", "w");
+    if(arq == NULL){
+        puts("Erro ao abrir o arquivo.");
+        exit(1);
+    }
+    for(i = 0; i < linhaContador; i++){
+        if(strstr(vetor[i], cpf) == NULL && achou == false){
+            fprintf(arq, "%s", vetor[i]);
+            printf("%s\n", vetor[i]);
+        }
+        else{
+            achou = true;
+            k++;
+        }
+        if(k >= 5){
+            achou = false;
+        }
+    }
+    free(vetor);
+    fclose(arq);
+
+    printf("Cliente excluido com sucesso!");
+}
 
 void imprimirCliente(Cliente *cliente){
     if(cliente == NULL){
@@ -149,19 +194,19 @@ Cliente cadastrarPessoa() {
 
     scanf("%*c"); //limpa o buffer da linha para nao ocorrer bugs
     printf("CPF: ");
-    scanf("%s", &C.cpf);
+    scanf("%s", C.cpf);
 
     //verificação de CPF
     while(continua){
         while(eValido(C.cpf) == 0){
             printf("CPF: ");
-            scanf("%s", &C.cpf);
+            scanf("%s", C.cpf);
         }
 
         while(analisarCliente(C.cpf) == 1){
             printf("Cliente ja existente! Tente novamente:\n");
             printf("CPF: ");
-            scanf("%s", &C.cpf);
+            scanf("%s", C.cpf);
         }
         continua = false;
     }
@@ -196,7 +241,6 @@ Cliente cadastrarPessoa() {
 short gravarCliente(Cliente* novo){
     FILE *arq = fopen("cliente.csv", "a+");
     if (arq) {
-        int i;
         //imprime os dados no arquivo
             fprintf(arq, "CPF: %s\n", novo->cpf);
             fprintf(arq, "Nome: %s\n", novo->nome);
@@ -211,6 +255,7 @@ short gravarCliente(Cliente* novo){
     } else {
         printf("ERRO: nao foi possivel abrir o arquivo.\n\n");
     }
+    return 0;
 }
 
 void listarClientes(){

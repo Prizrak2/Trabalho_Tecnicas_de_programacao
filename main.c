@@ -16,14 +16,14 @@ short menuPrincipal(){
 }
 
 int main(){
-    short op=1, op_cliente, op_produto, op_pedido;
+    short op=1, op_cliente;// op_produto, op_pedido;
     //variáveis Cliente
     Cliente novo, *cliente_buscado;
     char cpf[12];
     //variáveis Produto
     //Variáveis Pedido
 
-    FILE *arq;
+    //FILE *arq;
     while(op!=0){
         op = menuPrincipal();
         switch(op){
@@ -58,6 +58,22 @@ int main(){
                         }
                         break;
                     case 3:
+                        printf("Digite o CPF do Cliente a ser removido: ");
+                        setbuf(stdin, NULL);
+                        fgets(cpf, 12, stdin);
+                        puts("");
+                        if(eValido(cpf) == 0){
+
+                        }
+                        else{
+                            if(analisarCliente(cpf) == 0){
+                                puts("O Cliente nao existe.");
+                                puts("");
+                            } else {
+                            removerCliente(cpf);
+                            }
+                            puts("");
+                        }
                         break;
                     case 4:
                         listarClientes();
@@ -82,7 +98,7 @@ int main(){
             puts("");
             break;
         default:
-            puts("Opção Incoerente.");
+            puts("Opcao Incoerente.");
             puts("");
             break;
         }
